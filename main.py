@@ -8,10 +8,17 @@ WIN_WIDTH = 500 # a constant (remains unchanged)
 WIN_HEIGHT = 800
 
 #list for images, 2x is to make them bigger
-bird_imgs = pygame.transform.scale2x(pygame.image.load(os.path.join("flappy bird", "bird1.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("flappy bird", "bird2.png"))), pygame.transform.scale2x(pygame.image.load(os.path.join("flappy bird", "bird3.png"))) 
-pipe_img = pygame.transform.scale2x(pygame.image.load(os.path.join("flappy bird", "pipe.png")))
-base_img = pygame.transform.scale2x(pygame.image.load(os.path.join("flappy bird", "base.png")))
-backg_img = pygame.transform.scale2x(pygame.image.load(os.path.join("flappy bird", "bg.png")))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+def load_img(name):
+    return pygame.transform.scale2x(
+        pygame.image.load(os.path.join(BASE_DIR, "assets", name))
+    )
+
+bird_imgs = [load_img("bird1.png"), load_img("bird2.png"), load_img("bird3.png")]
+pipe_img = load_img("pipe.png")
+base_img = load_img("base.png")
+backg_img = load_img("bg.png")
 
 stat_font = pygame.font.SysFont("comicsans", 50)
 
