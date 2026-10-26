@@ -21,7 +21,10 @@ base_img = load_img("base.png")
 backg_img = load_img("bg.png")
 
 stat_font = pygame.font.SysFont("comicsans", 50)
+small_font = pygame.font.SysFont("comicsans", 30)
 
+generation = 0
+best_score = 0
 class Bird:
     # constants
     imgs = bird_imgs
@@ -159,14 +162,21 @@ class Base:
         window.blit(self.img, (self.x1, self.y))
         window.blit(self.img, (self.x2, self.y))
 
-def draw_window(window, birds, pipes, base, score):
+def draw_window(window, birds, pipes, base, score, generation, best_score):
     window.blit(backg_img, (0,0)) # blit = draw/put img on window
     for pipe in pipes:
         pipe.draw(window)
-    
+        
+    # current score
     text = stat_font.render("Score: " + str(score), 1,(255,255,255))
     window.blit(text, (WIN_WIDTH - 10 - text.get_width(), 10)) # however big the score gets, this will keep in check
+    
+    # stats
+    window.blit(small_font.render("Gen: " + str(generation), 1, (255, 255, 255)), (10, 10))
+    window.blit(small_font.render("Alive: " + str(len(birds)), 1, (255, 255, 255)), (10, 40))
+    window.blit(small_font.render("Gen: " + str(best_score), 1, (255, 255, 255)), (10, 70))
 
+    
     base.draw(window)
     for bird in birds:
         bird.draw(window)
@@ -174,6 +184,9 @@ def draw_window(window, birds, pipes, base, score):
     pygame.display.update()
 
 def main(genomes, config):
+    global generation, best_score
+    generation += 1
+    
     nets = []
     gen = []
     birds = []
@@ -207,7 +220,7 @@ def main(genomes, config):
             if len(pipes) > 1 and birds[0].x > pipes[0].x + pipes[0].PIPE_TOP.get_width():
                 pipe_ind = 1
         else:
-            run = False
+            game_run = False
             break
 
         for x, bird in enumerate(birds):
@@ -239,6 +252,9 @@ def main(genomes, config):
             pipe.move()
         if add_pipe:
             score += 1
+            if score > best_score:
+                best_score = score
+            
             for g in gen:
                 g.fitness += 5
             pipes.append(Pipe(700))
@@ -246,7 +262,7 @@ def main(genomes, config):
         for r in remove:
             pipes.remove(r)
         base.move() # spawns base
-        draw_window(window, birds, pipes, base, score) # lets us see our bird
+        draw_window(window, birds, pipes, base, score, generation, best_score) # lets us see our bird
 
         for x, bird in enumerate(birds):
             if bird.y + bird.img.get_height() >= 730 or bird.y < 0: # checks for bird hitting ground
