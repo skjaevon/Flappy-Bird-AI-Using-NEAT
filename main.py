@@ -330,7 +330,7 @@ def main(genomes, config):
                 gen.pop(x)
 
 
-def run(config_path):
+def run(config_path, generations):
     config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction, # defining properties
                                 neat.DefaultSpeciesSet, neat.DefaultStagnation, # loads in config file
                                 config_path)
