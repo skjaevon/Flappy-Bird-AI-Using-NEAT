@@ -182,6 +182,65 @@ def draw_window(window, birds, pipes, base, score, generation, best_score):
         bird.draw(window)
     
     pygame.display.update()
+    
+# creates the pop-up menu
+def draw_button(window, rect, label, mouse_pos):
+    color = (255, 200, 60) if rect.collidepoint(mouse_pos) else (240, 160, 30)
+    pygame.draw.rect(window, color, rect, border_radius=10)
+    pygame.draw.rect(window, (255, 255, 255), rect, 3, border_radius=10)
+    text = small_font.render(label, 1, (255, 255, 255))
+    window.blit(text, text.get_rect(center=rect.center))
+
+# shows the start menu. 
+# returns the chosen number of generations, or None if the player quits.
+def show_menu():
+    window = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+    clock = pygame.time.Clock()
+
+    options = [10, 25, 50, 100, 200]  # generation choices
+    index = 2  # starts on 50
+
+    left_btn = pygame.Rect(90, 340, 50, 50)
+    right_btn = pygame.Rect(360, 340, 50, 50)
+    start_btn = pygame.Rect(150, 450, 200, 60)
+    quit_btn = pygame.Rect(150, 540, 200, 60)
+
+    while True:
+        clock.tick(30)
+        mouse_pos = pygame.mouse.get_pos()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return None
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if left_btn.collidepoint(event.pos):
+                    index = max(0, index - 1)
+                elif right_btn.collidepoint(event.pos):
+                    index = min(len(options) - 1, index + 1)
+                elif start_btn.collidepoint(event.pos):
+                    return options[index]
+                elif quit_btn.collidepoint(event.pos):
+                    return None
+
+        window.blit(backg_img, (0, 0))
+
+        title = stat_font.render("Flappy Bird AI", 1, (255, 255, 255))
+        window.blit(title, title.get_rect(center=(WIN_WIDTH // 2, 180)))
+
+        label = small_font.render("Generations", 1, (255, 255, 255))
+        window.blit(label, label.get_rect(center=(WIN_WIDTH // 2, 300)))
+
+        value = stat_font.render(str(options[index]), 1, (255, 255, 255))
+        window.blit(value, value.get_rect(center=(WIN_WIDTH // 2, 365)))
+
+        draw_button(window, left_btn, "<", mouse_pos)
+        draw_button(window, right_btn, ">", mouse_pos)
+        draw_button(window, start_btn, "Start", mouse_pos)
+        draw_button(window, quit_btn, "Quit", mouse_pos)
+
+        pygame.display.update()
+
+
 
 def main(genomes, config):
     global generation, best_score
@@ -281,9 +340,14 @@ def run(config_path):
     stats = neat.StatisticsReporter()
     population.add_reporter(stats) # gives us output
 
-    winner = population.run(main,50) # runs 50 generations, calls main 50 times
+    winner = population.run(main, generation) # runs generations, calls main times that user inputs
 
 if __name__ == "__main__":
-    local_directory = os.path.dirname(__file__) # gives us path to directory name
+    local_directory = os.path.dirname(os.path.abspath(__file__)) # gives us path to directory name
     config_path = os.path.join(local_directory, "config-feedforward.txt") # accessing file
+    generations = show_menu()
+    if generations is None:
+        pygame.quit()
+        quit()
+    
     run(config_path)
