@@ -340,7 +340,7 @@ def run(config_path, generations):
     stats = neat.StatisticsReporter()
     population.add_reporter(stats) # gives us output
 
-    winner = population.run(main, generation) # runs generations, calls main times that user inputs
+    winner = population.run(main, generations) # runs generations, calls main times that user inputs
 
 if __name__ == "__main__":
     local_directory = os.path.dirname(os.path.abspath(__file__)) # gives us path to directory name
