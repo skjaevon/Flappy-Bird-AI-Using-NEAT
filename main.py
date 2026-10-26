@@ -174,7 +174,7 @@ def draw_window(window, birds, pipes, base, score, generation, best_score):
     # stats
     window.blit(small_font.render("Gen: " + str(generation), 1, (255, 255, 255)), (10, 10))
     window.blit(small_font.render("Alive: " + str(len(birds)), 1, (255, 255, 255)), (10, 40))
-    window.blit(small_font.render("Gen: " + str(best_score), 1, (255, 255, 255)), (10, 70))
+    window.blit(small_font.render("Best: " + str(best_score), 1, (255, 255, 255)), (10, 70))
 
     
     base.draw(window)
@@ -350,4 +350,4 @@ if __name__ == "__main__":
         pygame.quit()
         quit()
     
-    run(config_path)
+    run(config_path, generations)
